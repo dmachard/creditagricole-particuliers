@@ -10,6 +10,7 @@ jobs:
     environment: release
     permissions:
       id-token: write
+      contents: write
       
     steps:
     - uses: actions/checkout@v4
@@ -26,6 +27,14 @@ jobs:
       run: |
         VERSION=$(echo ${{ github.event.release.tag_name }} | cut -c2-)
         sed -i "s/__version__ = \".*\"/__version__ = \"$VERSION\"/" creditagricole_particuliers/__init__.py
+
+    - name: Commit version change
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git add creditagricole_particuliers/__init__.py
+        git commit -m "Update version to ${{ github.event.release.tag_name }}"
+        git push origin HEAD:${{ github.event.release.target_commitish }}
 
     - name: Build Python package
       run: |
