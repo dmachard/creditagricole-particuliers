@@ -7,15 +7,20 @@ This example demonstrates how to:
 3. Display card details and deferred operations
 """
 
+import sys
 from creditagricole_particuliers import Cards
-from ._utils import parse_args, login, logout
+from _utils import login, logout
 
 def main():
     # Parse command line arguments
-    args = parse_args()
+    if len(sys.argv) < 3:
+        print("Usage: cards_example.py <username> <department>")
+        sys.exit(1)
+    username = sys.argv[1]
+    department = int(sys.argv[2])
     
     # Create session
-    session = login(args.username, args.password, args.department)
+    session = login(username, department)
     
     try:
         # Get all cards

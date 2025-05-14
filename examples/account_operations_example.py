@@ -8,15 +8,20 @@ This example demonstrates how to:
 """
 
 from datetime import datetime, timedelta
-from creditagricole_particuliers import Accounts, Operations
-from ._utils import parse_args, login, logout
+import sys
+from creditagricole_particuliers import Accounts
+from _utils import login, logout
 
 def main():
-    # Parse command line arguments
-    args = parse_args()
-    
+    # get arguments from command line
+    if len(sys.argv) < 3:
+        print("Usage: account_operations_example.py <username> <department>")
+        sys.exit(1)
+    username = sys.argv[1]
+    department = int(sys.argv[2])
+
     # Create session
-    session = login(args.username, args.password, args.department)
+    session = login(username, department)
     
     try:
         # Get all accounts

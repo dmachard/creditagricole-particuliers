@@ -26,10 +26,6 @@ def main():
                 print(f"Department: {bank_info.get('department', 'N/A')}")
                 print(f"URL Prefix: {bank_info.get('regionalBankUrlPrefix', 'N/A')}")
                 print(f"Bank Code: {bank_info.get('code', 'N/A')}")
-                print("\nContact Information:")
-                print(f"Address: {bank_info.get('address', 'N/A')}")
-                print(f"Phone: {bank_info.get('phone', 'N/A')}")
-                print(f"Email: {bank_info.get('email', 'N/A')}")
                 print("-" * 50)
         except Exception as e:
             print(f"\nDepartment {dept}: No regional bank found or error occurred")
