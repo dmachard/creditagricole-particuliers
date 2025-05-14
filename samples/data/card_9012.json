@@ -1,0 +1,18 @@
+{
+  "index": 1,
+  "idPorteur": "00000087654321",
+  "idTitulaire": "00000087654321",
+  "idContratCarte": "00007654321",
+  "titulaire": "MRS JANE DOE",
+  "porteur": "MRS JANE DOE",
+  "typeCarte": "VISA CLASSIC",
+  "codeSituationCarte": 7,
+  "codeTypeDebitPaiementCarte": "I",
+  "idCarte": "4533 14XX XXXX 9012",
+  "dateArreteM": "May 1, 2023, 12:00:00 AM",
+  "datePrelevementM": "May 30, 2023, 12:00:00 AM",
+  "encoursCarteM": 123.45,
+  "dateArreteM1": "Jun 1, 2023, 12:00:00 AM",
+  "encoursCarteM1": 0,
+  "idCompte": "12345678901"
+}

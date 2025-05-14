@@ -1,0 +1,59 @@
+[
+  {
+    "solde": 0.0,
+    "meteo": "",
+    "cartes": [],
+    "cartesDD": [],
+    "operations": [],
+    "operationsInfo": {
+      "hasNext": 0,
+      "listeOperations": []
+    },
+    "formulesNBQ": [],
+    "libelleDevise": "",
+    "typeProduit": "",
+    "valorise": 0,
+    "idElementContrat": "",
+    "index": 0,
+    "indexList": 0,
+    "codeProduit": "",
+    "codeFamilleProduit": "",
+    "idRoleClient": "",
+    "idPartenaire": "",
+    "libellePartenaire": "",
+    "typePartenaire": "",
+    "idDevise": "",
+    "libelleProduit": "",
+    "libelleUsuelProduit": "",
+    "libelleCompte": "",
+    "numeroCompte": "",
+    "codeFamilleContratBam": "",
+    "numeroCompteBam": "",
+    "numeroSousCompteBam": "",
+    "codeFamilleProduitBam": "",
+    "codeNatureCompteBam": "",
+    "natureCompteBam": "",
+    "typeEcranBam": "",
+    "libellePartenaireBam": "",
+    "identifiantCompteSupportBam": "",
+    "compteDepotATerme": 0,
+    "grandeFamilleProduits": "",
+    "grandeFamilleProduitCode": "",
+    "familleProduit": {
+      "code": "",
+      "grandeFamilleProduits": "",
+      "libelle": "",
+      "pertinence": 0,
+      "niveau": 0
+    },
+    "sousFamilleProduit": {
+      "code": "",
+      "grandeFamilleProduits": "",
+      "libelle": "",
+      "pertinence": 0,
+      "niveau": 0
+    },
+    "rolePartenaireCalcule": "",
+    "numeroCompteSupportCreditBam": ""
+  }
+]

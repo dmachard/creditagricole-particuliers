@@ -9,6 +9,16 @@ Ce client Python est à destination des particuliers souhaitant récupérer ses 
 
 > Aucun numéro de compte ni mot de passe n'est stocké par ce client !
 
+## Documentation
+
+La documentation complète est disponible dans les sections suivantes :
+
+- [Documentation technique de la bibliothèque](docs/LIBRARY_REFERENCE.md)
+- [Exemples d'utilisation](docs/EXAMPLES.md)
+- [Utilisation des données d'exemple](samples/README.md)
+
+> **Note importante**: Pour naviguer dans la documentation, veuillez utiliser la table des matières dans chaque fichier README.
+
 ## Installation
 
 ```python

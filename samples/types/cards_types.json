@@ -1,0 +1,20 @@
+[
+  {
+    "index": 0,
+    "idPorteur": "",
+    "idTitulaire": "",
+    "idContratCarte": "",
+    "titulaire": "",
+    "porteur": "",
+    "typeCarte": "",
+    "codeSituationCarte": 0,
+    "codeTypeDebitPaiementCarte": "",
+    "idCarte": "",
+    "dateArreteM": "",
+    "datePrelevementM": "",
+    "encoursCarteM": 0.0,
+    "dateArreteM1": "",
+    "encoursCarteM1": 0,
+    "idCompte": ""
+  }
+]
