@@ -1,0 +1,38 @@
+[
+  {
+    "index": 0,
+    "idPorteur": "00000012345678",
+    "idTitulaire": "00000012345678",
+    "idContratCarte": "00001234567",
+    "titulaire": "MR JOHN DOE",
+    "porteur": "MR JOHN DOE",
+    "typeCarte": "MASTERCARD DUAL",
+    "codeSituationCarte": 7,
+    "codeTypeDebitPaiementCarte": "D",
+    "idCarte": "5137 81XX XXXX 1098",
+    "dateArreteM": "May 1, 2023, 12:00:00 AM",
+    "datePrelevementM": "May 30, 2023, 12:00:00 AM",
+    "encoursCarteM": 456.78,
+    "dateArreteM1": "Jun 1, 2023, 12:00:00 AM",
+    "encoursCarteM1": 0,
+    "idCompte": "12345678901"
+  },
+  {
+    "index": 1,
+    "idPorteur": "00000087654321",
+    "idTitulaire": "00000087654321",
+    "idContratCarte": "00007654321",
+    "titulaire": "MRS JANE DOE",
+    "porteur": "MRS JANE DOE",
+    "typeCarte": "VISA CLASSIC",
+    "codeSituationCarte": 7,
+    "codeTypeDebitPaiementCarte": "I",
+    "idCarte": "4533 14XX XXXX 9012",
+    "dateArreteM": "May 1, 2023, 12:00:00 AM",
+    "datePrelevementM": "May 30, 2023, 12:00:00 AM",
+    "encoursCarteM": 123.45,
+    "dateArreteM1": "Jun 1, 2023, 12:00:00 AM",
+    "encoursCarteM1": 0,
+    "idCompte": "12345678901"
+  }
+] 

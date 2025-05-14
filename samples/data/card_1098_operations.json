@@ -1,0 +1,32 @@
+[
+  {
+    "datePrelevement": "May 30, 2023, 12:00:00 AM",
+    "dateOperation": "May 15, 2023, 12:00:00 AM",
+    "libelleOperation": "MONOPRIX PARIS",
+    "montant": -56.32,
+    "idDevise": "EUR",
+    "libelleDevise": "\u20ac",
+    "indexCarte": -1,
+    "fitid": ""
+  },
+  {
+    "datePrelevement": "May 30, 2023, 12:00:00 AM",
+    "dateOperation": "May 13, 2023, 12:00:00 AM",
+    "libelleOperation": "SEPHORA PARIS",
+    "montant": -75.50,
+    "idDevise": "EUR",
+    "libelleDevise": "\u20ac",
+    "indexCarte": -1,
+    "fitid": ""
+  },
+  {
+    "datePrelevement": "May 30, 2023, 12:00:00 AM",
+    "dateOperation": "May 10, 2023, 12:00:00 AM",
+    "libelleOperation": "AMAZON EU SARL",
+    "montant": -29.99,
+    "idDevise": "EUR",
+    "libelleDevise": "\u20ac",
+    "indexCarte": -1,
+    "fitid": ""
+  }
+] 
