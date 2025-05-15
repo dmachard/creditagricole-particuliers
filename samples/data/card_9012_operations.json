@@ -13,7 +13,7 @@
     "datePrelevement": "May 30, 2023, 12:00:00 AM",
     "dateOperation": "May 12, 2023, 12:00:00 AM",
     "libelleOperation": "FNAC PARIS",
-    "montant": -49.90,
+    "montant": -49.9,
     "idDevise": "EUR",
     "libelleDevise": "\u20ac",
     "indexCarte": -1,
@@ -29,4 +29,4 @@
     "indexCarte": -1,
     "fitid": ""
   }
-] 
+]

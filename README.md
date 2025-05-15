@@ -14,7 +14,7 @@ Ce client Python est à destination des particuliers souhaitant récupérer ses 
 La documentation complète est disponible dans les sections suivantes :
 
 - [Documentation technique de la bibliothèque](creditagricole_particuliers/README.md)
-- [Exemples d'utilisation](examples/README.md)
+- [Documentation des échantillons](samples/README.md)
 - [Documentation des fichiers Mock](mocks/README.md)
 
 > **Note importante**: Pour naviguer dans la documentation, veuillez utiliser la table des matières dans chaque fichier README.

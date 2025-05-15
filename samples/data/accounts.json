@@ -13,7 +13,7 @@
     "libelleDevise": "\u20ac",
     "typeProduit": "compte",
     "valorise": true,
-    "idElementContrat": "003828090341412C013EF60000000C",
+    "idElementContrat": "004562789123456C789EF60000000D",
     "index": 0,
     "indexList": 1,
     "codeProduit": "1",
@@ -23,7 +23,7 @@
     "libellePartenaire": "M. DOE JOHN",
     "typePartenaire": "GP",
     "idDevise": "EUR",
-    "libelleProduit": "Compte de Dépôt",
+    "libelleProduit": "Compte de D\u00e9p\u00f4t",
     "libelleUsuelProduit": "CCHQ      ",
     "libelleCompte": "M. DOE JOHN",
     "numeroCompte": "12345678901",
@@ -57,10 +57,10 @@
     "numeroCompteSupportCreditBam": "00000000000"
   },
   {
-    "solde": 15000.00,
-    "idContrat": "003862335842318C0059B60000140C",
+    "solde": 15000.0,
+    "idContrat": "004562789123456C789EF60000000D",
     "valorisationNonDisponible": "",
-    "montantEpargne": 15000.00,
+    "montantEpargne": 15000.0,
     "dateValorisationEpargne": "2023-06-30",
     "operations": [],
     "operationsInfo": {
@@ -72,7 +72,7 @@
     "libelleDevise": "\u20ac",
     "typeProduit": "epargne-collecte",
     "valorise": true,
-    "idElementContrat": "003862335842318C0059B60000141C",
+    "idElementContrat": "007891234567890C0123F60000000A",
     "index": 1,
     "indexList": 2,
     "codeProduit": "371",
@@ -101,7 +101,7 @@
     "familleProduit": {
       "code": "NPC15000",
       "grandeFamilleProduits": "EPARGNE_DISPONIBLE",
-      "libelle": "Mon épargne disponible",
+      "libelle": "Mon \u00e9pargne disponible",
       "pertinence": 98,
       "niveau": 3
     },
@@ -115,4 +115,4 @@
     "rolePartenaireCalcule": "TITULAIRE",
     "numeroCompteSupportCreditBam": "00000000000"
   }
-] 
+]
