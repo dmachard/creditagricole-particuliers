@@ -1,0 +1,32 @@
+[
+  {
+    "datePrelevement": "May 30, 2023, 12:00:00 AM",
+    "dateOperation": "May 14, 2023, 12:00:00 AM",
+    "libelleOperation": "CARREFOUR CITY PARIS",
+    "montant": -23.45,
+    "idDevise": "EUR",
+    "libelleDevise": "\u20ac",
+    "indexCarte": -1,
+    "fitid": ""
+  },
+  {
+    "datePrelevement": "May 30, 2023, 12:00:00 AM",
+    "dateOperation": "May 12, 2023, 12:00:00 AM",
+    "libelleOperation": "FNAC PARIS",
+    "montant": -49.90,
+    "idDevise": "EUR",
+    "libelleDevise": "\u20ac",
+    "indexCarte": -1,
+    "fitid": ""
+  },
+  {
+    "datePrelevement": "May 30, 2023, 12:00:00 AM",
+    "dateOperation": "May 9, 2023, 12:00:00 AM",
+    "libelleOperation": "NETFLIX.COM",
+    "montant": -15.99,
+    "idDevise": "EUR",
+    "libelleDevise": "\u20ac",
+    "indexCarte": -1,
+    "fitid": ""
+  }
+]
