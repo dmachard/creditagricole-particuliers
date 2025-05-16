@@ -50,7 +50,7 @@ def main():
         useMockSuffix="mock",       # Suffix for mock data files
         writeMockSuffix="mock"      # Suffix for written mock data files
     )
-    print(f"MockConfig: {mock_config}")
+    print(f"# {mock_config}")
 
     try:
         # Step 1: Get regional bank information
