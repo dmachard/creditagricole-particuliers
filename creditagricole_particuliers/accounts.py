@@ -105,6 +105,10 @@ class Accounts:
         
         self.get_accounts_per_products()
 
+    def __len__(self):
+        """Return the number of accounts"""
+        return len(self.accounts_list)
+    
     def __iter__(self):
         """iter"""
         self.n = 0

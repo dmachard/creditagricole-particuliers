@@ -57,6 +57,10 @@ class Cards:
 
         self.get_cards_per_account()
 
+    def __len__(self):
+        """Return the number of operations"""
+        return len(self.cards_list)
+
     def __iter__(self):
         """iter"""
         self.n = 0
