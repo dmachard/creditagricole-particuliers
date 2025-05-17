@@ -55,7 +55,7 @@ class RegionalBanks:
             data = r.text
             
         # Write mock data if configured
-        if self.mock_config.writeMocks:
+        if self.mock_config.writeMocks():
             self.mock_config.write_json_mock(f"{mock_file_base}_{self.mock_config.writeMockSuffix}.json", data)
                     
         regionalBanks = json.loads(data)
