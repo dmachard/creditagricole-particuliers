@@ -10,7 +10,7 @@
     "montant": -45.67,
     "idDevise": "EUR",
     "libelleDevise": "\u20ac",
-    "libelleComplementaire": "CARTE N° xxxx-xxxx-xxxx-1098",
+    "libelleComplementaire": "CARTE N\u00b0 xxxx-xxxx-xxxx-1098",
     "referenceMandat": "",
     "idCreancier": "",
     "libelleCash1": "",
@@ -29,7 +29,7 @@
     "familleTypeOperation": "7",
     "libelleOperation": "VIREMENT RECU JOHN DOE",
     "libelleTypeOperation": "VIREMENT EN VOTRE FAVEUR",
-    "montant": 1500.00,
+    "montant": 1500.0,
     "idDevise": "EUR",
     "libelleDevise": "\u20ac",
     "libelleComplementaire": "VIREMENT DE SALAIRE MAI",
@@ -51,7 +51,7 @@
     "familleTypeOperation": "5",
     "libelleOperation": "PRELEVEMENT AUTORITE",
     "libelleTypeOperation": "PRELEVEMENT",
-    "montant": -42.50,
+    "montant": -42.5,
     "idDevise": "EUR",
     "libelleDevise": "\u20ac",
     "libelleComplementaire": "ABONNEMENT INTERNET MAI",
@@ -65,4 +65,4 @@
     "pictogrammeCSS": "npc-debit",
     "fitid": "7756520981410"
   }
-] 
+]

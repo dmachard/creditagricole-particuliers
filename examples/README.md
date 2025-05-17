@@ -1,83 +1,123 @@
-# Exemples de la Bibliothèque Python du Crédit Agricole
+# Documentation des Exemples
 
-Ce document explique comment exécuter les scripts d'exemple fournis dans ce répertoire.
+## Table des Matières
 
-## Pour Commencer
+1. [Introduction](#introduction)
+2. [Exemples Disponibles](#exemples-disponibles)
+   - [Exemple Standard](#exemple-standard)
+   - [Exemple de Recherche](#exemple-de-recherche)
+3. [Utilisation des Mocks](#utilisation-des-mocks)
+   - [Configuration des Mocks](#configuration-des-mocks)
+   - [Utilisation des Données Réelles](#utilisation-des-données-réelles)
+4. [Structure des Exemples](#structure-des-exemples)
+   - [Authentification](#authentification)
+   - [Gestion des Sessions](#gestion-des-sessions)
+   - [Gestion des Erreurs](#gestion-des-erreurs)
 
-Avant d'exécuter des exemples, assurez-vous d'avoir configuré votre environnement :
+## Introduction
 
-1. Créez et activez un environnement virtuel :
-   ```bash
-   # Créer l'environnement virtuel
-   python -m venv venv
-   
-   # Activer sur Linux/Mac
-   source venv/bin/activate
-   
-   # Ou activer sur Windows
-   .\venv\Scripts\activate
-   ```
+Cette documentation décrit les exemples fournis avec la bibliothèque Python du Crédit Agricole. Ces exemples démontrent comment utiliser les différentes fonctionnalités de la bibliothèque pour interagir avec les services bancaires en ligne.
 
-2. Installez les dépendances requises :
-   ```bash
-   pip install -r requirements.txt
-   ```
+## Exemples Disponibles
 
-## Exemples Disponibles {#examples-section}
+### Exemple Standard
 
-Les scripts d'exemple suivants sont disponibles dans ce répertoire :
+Le fichier `standard_example.py` illustre les cas d'utilisation standard de l'API :
 
-### 1. Gestion des Comptes
-- Fichier : [accounts_example.py](./accounts_example.py)
-- Description : Montre comment lister tous vos comptes et leurs détails.
-- Exécution :
-  ```bash
-  python accounts_example.py
-  ```
+- Authentification et création de session
+- Récupération des informations de la banque régionale
+- Liste de tous les comptes et leurs détails :
+  - Informations du compte et IBAN
+  - Opérations récentes sur une période donnée
+  - Solde actuel
+- Liste de toutes les cartes et leurs opérations différées
+- Gestion propre de la déconnexion
 
-### 2. Opérations de Compte
-- Fichier : [account_operations_example.py](./account_operations_example.py)
-- Description : Démontre comment récupérer et afficher les opérations de vos comptes.
-- Exécution :
-  ```bash
-  python account_operations_example.py
-  ```
+Cet exemple couvre les fonctionnalités les plus fréquemment utilisées, mais ne représente pas l'ensemble des possibilités offertes par l'API. Pour des cas d'utilisation plus spécifiques, consultez la documentation complète de la bibliothèque.
 
-### 3. Gestion des Cartes
-- Fichier : [cards_example.py](./cards_example.py)
-- Description : Montre comment gérer et afficher les détails de vos cartes de crédit/débit.
-- Exécution :
-  ```bash
-  python cards_example.py
-  ```
+### Exemple de Recherche
 
-### 4. Banques Régionales
-- Fichier : [regional_banks_example.py](./regional_banks_example.py)
-- Description : Affiche les informations sur les banques régionales du Crédit Agricole.
-- Exécution :
-  ```bash
-  python regional_banks_example.py
-  ```
+Le fichier `search_example.py` montre comment rechercher des éléments spécifiques :
 
-## Exécution des Exemples
+- Recherche d'un compte par son numéro
+- Recherche d'une carte par ses 4 derniers chiffres
 
-Lors de l'exécution de ces exemples :
+## Utilisation des Mocks
 
-1. Vous serez invité à saisir vos identifiants Crédit Agricole :
-   - Nom d'utilisateur
-   - Mot de passe (saisi de manière sécurisée)
-   - Code département (par exemple, 75 pour Paris)
+### Configuration des Mocks
 
-2. Les exemples géreront automatiquement :
-   - L'authentification sécurisée
-   - La gestion appropriée des sessions
-   - La déconnexion sécurisée une fois terminé
+Les exemples utilisent par défaut des données mockées pour éviter d'effectuer de véritables appels API. La configuration des mocks se fait via la classe `MockConfig` :
 
-3. Si vous rencontrez des erreurs :
-   - Vérifiez votre connexion Internet
-   - Vérifiez vos identifiants
-   - Assurez-vous d'utiliser le bon code département
+```python
+mock_config = MockConfig(
+    useMocksDir=mocks_dir,      # Répertoire contenant les fichiers mock
+    writeMocksDir=None,         # Pas d'écriture de données mock
+    useMockSuffix="mock",       # Suffixe des fichiers mock
+    writeMockSuffix="mock"      # Suffixe pour les nouveaux fichiers mock
+)
+```
 
-## Module Utilitaires
+### Utilisation des Données Réelles
 
-Le fichier [`_utils.py`](./_utils.py) contient des fonctions d'aide utilisées par les exemples. Vous n'avez pas besoin d'exécuter ce fichier directement.
+Pour utiliser les données réelles au lieu des mocks :
+
+1. Supprimez la configuration des mocks :
+```python
+session = Authenticator(
+    username=username,
+    password=password_digits,
+    department=department
+)
+```
+
+2. Assurez-vous d'avoir les identifiants corrects :
+- `username` : Votre numéro client Crédit Agricole
+- `password_digits` : Votre mot de passe à 6 chiffres
+- `department` : Votre numéro de département
+
+## Structure des Exemples
+
+### Authentification
+
+Tous les exemples commencent par l'authentification :
+
+```python
+session = Authenticator(
+    username=username,
+    password=password_digits,
+    department=department,
+    mock_config=mock_config
+)
+```
+
+### Gestion des Sessions
+
+Les exemples utilisent un bloc `try/finally` pour garantir une déconnexion propre :
+
+```python
+try:
+    # Code d'utilisation de l'API
+finally:
+    Logout(session).logout()
+```
+
+### Gestion des Erreurs
+
+Les exemples incluent une gestion basique des erreurs avec des messages de log. Pour une utilisation en production, il est recommandé d'ajouter une gestion d'erreurs plus robuste.
+
+## Bonnes Pratiques
+
+1. **Sécurité**
+   - Ne stockez jamais les identifiants en dur dans le code
+   - Utilisez des variables d'environnement ou des fichiers de configuration sécurisés
+   - Déconnectez-vous toujours après utilisation
+
+2. **Performance**
+   - Limitez le nombre d'opérations récupérées avec le paramètre `count`
+   - Utilisez des plages de dates appropriées pour les opérations
+   - Évitez les appels API inutiles
+
+3. **Développement**
+   - Utilisez les mocks pendant le développement
+   - Testez avec des données réelles avant la mise en production
+   - Documentez les cas d'erreur spécifiques à votre utilisation

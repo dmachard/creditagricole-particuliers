@@ -27,18 +27,13 @@ Le dossier `/data` contient des fichiers JSON qui représentent les structures d
 
 Ce mode (par défaut) extrait vos données réelles et les sauvegarde sans suffixe. Ces fichiers contiennent toutes vos informations financières.
 
-- **Fichiers de Collection** :
+- **Fichiers Groupés par Type** :
   - `accounts.json` : Liste complète des comptes
+  - `account_{numeroCompte}_operations.json` : Historique des opérations pour chaque compte (ex: `account_98765432109_operations.json`)
+  - `account_{numeroCompte}_iban.json` : Coordonnées IBAN pour chaque compte (ex: `account_98765432109_iban.json`)
   - `cards.json` : Liste complète des cartes
-  - `regionalBanks.json` : Liste des banques régionales et leurs départements
-
-- **Fichiers Individuels** :
-  - `account_{numéro_compte}.json` : Détails spécifiques pour chaque compte
-  - `account_{numéro_compte}_operations.json` : Historique des opérations pour chaque compte
-  - `account_{numéro_compte}_iban.json` : Coordonnées IBAN pour chaque compte
-  - `card_{4_derniers_chiffres}.json` : Détails spécifiques pour chaque carte
-  - `card_{4_derniers_chiffres}_operations.json` : Historique des opérations pour chaque carte
-  - `regionalBank_{code_département}.json` : Informations sur la banque régionale d'un département
+  - `card_{last4}_operations.json` : Historique des opérations pour chaque carte (ex: `card_9012_operations.json`)
+  - `regionalBank_{code_département}.json` : Informations sur la banque régionale d'un département (ex: `regionalBank_75.json`)
 
 ### Mode de types
 
@@ -49,18 +44,16 @@ Ce mode (`--mode types`) extrait uniquement la structure des données avec des v
 - Pour les booléens : false
 - Pour les listes : un seul élément exemple
 
-Ces fichiers portent le suffixe `_types` et sont idéaux pour le développement sans manipuler de données personnelles. Les identifiants numériques dans les noms de fichiers sont remplacés par des zéros pour préserver la confidentialité.
+Ces fichiers portent le suffixe `_types` et sont idéaux pour le développement sans manipuler de données personnelles. Les noms de fichiers sont simplifiés et utilisent la forme singulière.
 
-- **Fichiers de Collection** :
-  - `accounts_types.json` : Structure des comptes (un seul exemple)
-  - `cards_types.json` : Structure des cartes (un seul exemple)
+- **Fichiers d'Exemple** :
+  - `account_types.json` : Structure générique d'un compte
+  - `card_types.json` : Structure générique d'une carte
+  - `operation_types.json` : Structure générique d'une opération de compte
+  - `operation_card_types.json` : Structure générique d'une opération de carte
+  - `regionalBank_types.json` : Structure générique des informations bancaires
 
-- **Fichiers Individuels** :
-  - `account_000000_types.json` : Structure des détails d'un compte (les zéros remplacent le vrai numéro de compte)
-  - `account_000000_operations_types.json` : Structure des opérations (un seul exemple)
-  - `card_0000_types.json` : Structure des détails d'une carte (les zéros remplacent les vrais chiffres)
-  - `card_0000_operations_types.json` : Structure des opérations carte (un seul exemple)
-  - `regionalBank_00_types.json` : Structure des informations bancaires (les zéros remplacent le vrai code département)
+Un seul exemple est généré pour chaque type de donnée, sans distinction par code ou identifiant.
 
 ## Script de Création d'Exemples
 
@@ -101,6 +94,30 @@ Vous pouvez exécuter le script de plusieurs manières :
   - `data` : Extrait vos données réelles (sensibles)
   - `types` : Extrait uniquement la structure avec des valeurs fictives
 
+### Utilisation des Mocks
+
+Le script supporte l'utilisation de mocks pour le développement et les tests. Cette fonctionnalité permet de :
+- Utiliser des données mockées au lieu d'appeler l'API réelle
+- Sauvegarder les réponses de l'API dans des fichiers mock pour une utilisation ultérieure
+
+Arguments spécifiques aux mocks :
+- `--use-mocks-dir` : Dossier contenant les fichiers mock à utiliser
+- `--write-mocks-dir` : Dossier où sauvegarder les réponses API en tant que fichiers mock
+- `--use-mock-suffix` : Suffixe des fichiers mock à utiliser (par défaut : 'mock')
+- `--write-mock-suffix` : Suffixe pour les nouveaux fichiers mock (par défaut : 'mock')
+
+Exemples d'utilisation des mocks :
+```bash
+# Utiliser des mocks existants
+./create_samples.py --username johndoe --department 75 --use-mocks-dir ./mocks
+
+# Sauvegarder les réponses API comme mocks
+./create_samples.py --username johndoe --department 75 --write-mocks-dir ./mocks
+
+# Utiliser et sauvegarder des mocks avec des suffixes personnalisés
+./create_samples.py --username johndoe --department 75 --use-mocks-dir ./mocks --write-mocks-dir ./mocks --use-mock-suffix test --write-mock-suffix new
+```
+
 ### Exemples
 
 Exécution simple (utilise le mode "data" par défaut et sauvegarde dans le répertoire ./data) :
@@ -130,14 +147,16 @@ Pour enregistrer les fichiers dans un dossier personnalisé :
 
 **Mode 'data'** (défaut) :
 - Extrait toutes vos données financières réelles
-- Sauvegarde tous les comptes, toutes les cartes, et toutes les opérations
+- Sauvegarde les comptes regroupés par grandeFamilleProduitCode
+- Sauvegarde les opérations et IBAN pour chaque compte
+- Sauvegarde les cartes et leurs opérations
 - Fichiers sauvegardés dans le dossier ./data par défaut
 
 **Mode 'types'** :
 - Extrait uniquement la structure des données
 - Remplace les valeurs réelles par des placeholders selon leur type
-- Ne sauvegarde qu'un seul exemple de chaque type de donnée (compte, carte, opération)
-- Ajoute le suffixe '_types' aux fichiers
+- Sauvegarde un seul exemple pour chaque type de données (compte, carte, opération)
+- Utilise des noms de fichiers au singulier avec le suffixe '_types'
 - Fichiers sauvegardés dans le dossier ./types par défaut
 
 3. Les données sont enregistrées au format JSON dans le dossier spécifié

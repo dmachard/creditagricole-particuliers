@@ -1,8 +1,8 @@
-
 import requests
 import json
 import time
-from datetime import datetime
+import os
+from datetime import datetime, timedelta
 
 class Operation:
     def __init__(self, descr):
@@ -22,7 +22,15 @@ class Operation:
 
 class DeferredOperations:
     def __init__(self, session, compteIdx, grandeFamilleCode, carteIdx):
-        """deferred card operations"""
+        """
+        Initialize deferred card operations manager
+        
+        Args:
+            session (Authenticator): Authentication session
+            compteIdx (str): Account index
+            grandeFamilleCode (str): Product family code
+            carteIdx (str): Card index identifier
+        """
         self.session = session
         self.compteIdx = compteIdx
         self.grandeFamilleCode = grandeFamilleCode
@@ -44,6 +52,10 @@ class DeferredOperations:
             return op
         else:
             raise StopIteration
+            
+    def __len__(self):
+        """Return the number of operations"""
+        return len(self.list_operations)
 
     def as_json(self):
         """as json"""
@@ -53,23 +65,54 @@ class DeferredOperations:
         return json.dumps(_ops)
         
     def get_operations(self):
-        """get operations"""
-        # call operations
-        url = "%s" % self.session.url
-        url += "/%s/particulier/operations/synthese/detail-comptes/" % self.session.regional_bank_url
-        url += "jcr:content.n3.operations.encours.carte.debit.differe.json"
-        url += "?grandeFamilleCode=%s&compteIdx=%s&carteIdx=%s" % (self.grandeFamilleCode, self.compteIdx, self.carteIdx)
-        r = requests.get(url=url, verify=self.session.ssl_verify, cookies=self.session.cookies)
-        if r.status_code != 200:
-            raise Exception( "[error] get deffered operations: %s - %s" % (r.status_code, r.text) )
+        """
+        Retrieves deferred card operations and populates list_operations
+        
+        Args:
+            max_retries (int): Maximum number of retry attempts for temporary errors
+            retry_delay (int): Delay in seconds between retry attempts
+            
+        Raises:
+            Exception: If the API request fails after all retries
+        """
+        mock_file_base = f"card-{self.carteIdx}_operations"
+        
+        if self.session.useMocks:
+            # Use the new read_json_mock method to get raw content
+            data = self.session.mock_config.read_json_mock(f"{mock_file_base}_{self.session.mock_config.useMockSuffix}.json")
+        else:
+            # call operations
+            url = "%s" % self.session.url
+            url += "/%s/particulier/operations/synthese/detail-comptes/" % self.session.regional_bank_url
+            url += "jcr:content.n3.operations.encours.carte.debit.differe.json"
+            url += "?grandeFamilleCode=%s&compteIdx=%s&carteIdx=%s" % (self.grandeFamilleCode, self.compteIdx, self.carteIdx)
+            r = requests.get(url=url, verify=self.session.ssl_verify, cookies=self.session.cookies)
+            if r.status_code != 200:
+                raise Exception( "[error] get deferred operations: %s - %s" % (r.status_code, r.text) )
+            data = r.text
+            
+        # Write mock data if requested
+        if self.session.writeMocks:
+            self.session.mock_config.write_json_mock(f"{mock_file_base}_{self.session.mock_config.writeMockSuffix}.json", data)
            
         # success, save list operations
-        for op in json.loads(r.text):
+        for op in json.loads(data):
             self.list_operations.append( Operation(op) )
 
 class Operations:
     def __init__(self, session, compteIdx, grandeFamilleCode, date_start, date_stop, count=100, sleep=None):
-        """operations class"""
+        """
+        Initialize account operations manager
+        
+        Args:
+            session (Authenticator): Authentication session
+            compteIdx (str): Account index
+            grandeFamilleCode (str): Product family code
+            date_start (str): Start date for operations in ISO 8601 format (YYYY-MM-DD)
+            date_stop (str): End date for operations in ISO 8601 format (YYYY-MM-DD)
+            count (int, optional): Maximum number of operations to retrieve. Defaults to 100.
+            sleep (int or float, optional): Sleep time between paginated requests. Defaults to None.
+        """
         self.session = session
         self.compteIdx = compteIdx
         self.grandeFamilleCode = grandeFamilleCode
@@ -92,6 +135,10 @@ class Operations:
             return op
         else:
             raise StopIteration
+            
+    def __len__(self):
+        """Return the number of operations"""
+        return len(self.list_operations)
 
     def as_json(self):
         """as json"""
@@ -101,7 +148,18 @@ class Operations:
         return json.dumps(_ops)
 
     def get_operations(self, count, startIndex=None, limit=30, sleep=None):
-        """get operations according to the date range"""
+        """
+        Retrieves account operations within date range and populates list_operations
+        
+        Args:
+            count (int): Maximum number of operations to retrieve
+            startIndex (str, optional): Starting index for pagination. Defaults to None.
+            limit (int, optional): Number of operations to retrieve per request. Defaults to 30.
+            sleep (int or float, optional): Sleep time in seconds between paginated requests. Defaults to None.
+            
+        Raises:
+            Exception: If the API request fails
+        """
         # convert date to timestamp
         ts_date_debut = datetime.strptime(self.date_start, "%Y-%m-%d")
         ts_date_debut = int(ts_date_debut.timestamp())*1000
@@ -114,24 +172,38 @@ class Operations:
         if count > limit:
             nextCount = count - limit
         
-        # call operations ressources
-        url = "%s" % self.session.url
-        url += "/%s/particulier/operations/synthese/detail-comptes/" % self.session.regional_bank_url
-        url += "jcr:content.n3.operations.json?grandeFamilleCode=%s&compteIdx=%s" % (self.grandeFamilleCode, self.compteIdx)
-        url += "&idDevise=EUR"
-        url += "&dateDebut=%s" % ts_date_debut
-        if startIndex is not None:
-            url += "&startIndex=%s" % requests.utils.quote(startIndex)
-        else:
-            url += "&dateFin=%s" % ts_date_fin
-        url += "&count=%s" % limit
+        mock_file_base = f"account-{self.grandeFamilleCode}-{self.compteIdx}_operations"
         
-        r = requests.get(url=url, verify=self.session.ssl_verify, cookies=self.session.cookies)
-        if r.status_code != 200:
-            raise Exception( "[error] get operations: %s - %s" % (r.status_code, r.text) )
+        if self.session.useMocks:
+            # Use the new read_json_mock method to get raw content
+            data = self.session.mock_config.read_json_mock(f"{mock_file_base}_{self.session.mock_config.useMockSuffix}.json")
+            # Wrap the raw content in a listeOperations object
+            data = "{ \"listeOperations\": " + data + "}"
+        else:
+            # call operations resources
+            url = "%s" % self.session.url
+            url += "/%s/particulier/operations/synthese/detail-comptes/" % self.session.regional_bank_url
+            url += "jcr:content.n3.operations.json?grandeFamilleCode=%s&compteIdx=%s" % (self.grandeFamilleCode, self.compteIdx)
+            url += "&idDevise=EUR"
+            url += "&dateDebut=%s" % ts_date_debut
+            if startIndex is not None:
+                url += "&startIndex=%s" % requests.utils.quote(startIndex)
+            else:
+                url += "&dateFin=%s" % ts_date_fin
+            url += "&count=%s" % limit
+            
+            r = requests.get(url=url, verify=self.session.ssl_verify, cookies=self.session.cookies)
+            if r.status_code != 200:
+                raise Exception( "[error] get operations: %s - %s" % (r.status_code, r.text) )
+            data = r.text
+            
+            # Write mock data if requested
+            if self.session.writeMocks:
+                operations_data = json.loads(data)["listeOperations"]
+                self.session.mock_config.write_json_mock(f"{mock_file_base}_{self.session.mock_config.writeMockSuffix}.json", operations_data)
            
         # success, save list operations
-        rsp = json.loads(r.text)
+        rsp = json.loads(data)
         for op in rsp["listeOperations"]:
             self.list_operations.append( Operation(op) )
 

@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 """
-Ce script se connecte à Crédit Agricole et extrait des structures de réponse pour comprendre
-le schéma complet des objets renvoyés par l'API.
-Crée des fichiers séparés pour chaque compte, carte, etc.
+This script connects to Crédit Agricole and extracts response structures to understand
+the complete schema of objects returned by the API.
+Creates separate files for each account, card, etc.
 
-Deux modes disponibles:
-- 'data': sauvegarde les données réelles (sensibles) sans suffixe
-- 'types': sauvegarde uniquement la structure avec des valeurs fictives avec le suffixe '_types'
+Two available modes:
+- 'data': saves real data (sensitive) without suffix
+- 'types': saves only the structure with dummy values with the '_types' suffix
+
+Mock functionality:
+- Use --mocks-dir to specify mock directory
+- Use --write-mocks to write API responses to mock files
+- Use --use-mocks to use mock data instead of API calls
 """
 
 import json
@@ -17,9 +22,10 @@ import re
 from datetime import datetime, timedelta
 from getpass import getpass
 from typing import Any, Dict, List, Union
+from collections import defaultdict
 
 from creditagricole_particuliers import (
-    authenticator, accounts, regionalbanks, cards
+    authenticator, accounts, regionalbanks, cards, logout, MockConfig
 )
 
 def save_json(data, filename, target_dir):
@@ -30,11 +36,11 @@ def save_json(data, filename, target_dir):
 
 def convert_to_type_structure(data: Any) -> Any:
     """
-    Convertit des données réelles en structure de types.
-    Remplace les valeurs par des placeholders selon leur type.
+    Converts real data to type structure.
+    Replaces values with placeholders according to their type.
     """
     if isinstance(data, str):
-        # Remplacer les chaînes par une chaîne vide au lieu de "str"
+        # Replace strings with empty string instead of "str"
         return ""
     elif isinstance(data, int):
         return 0
@@ -44,7 +50,7 @@ def convert_to_type_structure(data: Any) -> Any:
         return False
     elif isinstance(data, list):
         if data:
-            # Ne prend que le premier élément comme exemple
+            # Only take the first element as an example
             return [convert_to_type_structure(data[0])]
         return []
     elif isinstance(data, dict):
@@ -52,13 +58,13 @@ def convert_to_type_structure(data: Any) -> Any:
     elif data is None:
         return None
     else:
-        # Pour les types non gérés
+        # For unhandled types
         return f"type:{type(data).__name__}"
 
 def create_placeholder(original_id: str) -> str:
     """
-    Crée un placeholder pour un identifiant en remplaçant tous les caractères par des '0'.
-    Utilisé pour générer des noms de fichiers sans données sensibles.
+    Creates a placeholder for an identifier by replacing all characters with '0'.
+    Used to generate filenames without sensitive data.
     """
     if re.match(r'^[0-9]+$', original_id):
         return '0' * len(original_id)
@@ -72,7 +78,14 @@ def main():
     parser.add_argument('--department', required=True, type=int, help='Department code')
     parser.add_argument('--output-dir', default=None, help='Output directory for samples')
     parser.add_argument('--mode', choices=['data', 'types'], default='data',
-                       help="Mode de génération: 'data' pour données réelles (défaut), 'types' pour structure avec placeholders")
+                       help="Generation mode: 'data' for real data (default), 'types' for structure with placeholders")
+    
+    # Add mock functionality arguments
+    parser.add_argument('--use-mocks-dir', default=None, help='Directory for mock files to use')
+    parser.add_argument('--write-mocks-dir', default=None, help='Directory for mock files to write')
+    parser.add_argument('--use-mock-suffix', default='mock', help='Suffix for mock files to use')
+    parser.add_argument('--write-mock-suffix', default='mock', help='Suffix for mock files to write')
+    
     args = parser.parse_args()
 
     # Get password either from argument or prompt
@@ -94,6 +107,17 @@ def main():
     
     # Ensure output directory exists
     os.makedirs(target_dir, exist_ok=True)
+    
+    # Create MockConfig object if mock functionality is enabled
+    mock_config = None
+    if args.use_mocks_dir or args.write_mocks_dir:
+        mock_config = MockConfig(
+            useMocksDir=args.use_mocks_dir,
+            writeMocksDir=args.write_mocks_dir,
+            useMockSuffix=args.use_mock_suffix,
+            writeMockSuffix=args.write_mock_suffix
+        )
+        print(mock_config)
 
     try:
         # Authenticate
@@ -101,24 +125,22 @@ def main():
         auth = authenticator.Authenticator(
             username=args.username,
             password=password_digits,
-            department=args.department
+            department=args.department,
+            mock_config=mock_config
         )
         
         # Get regional banks information
         print("Getting regional banks...")
-        rb = regionalbanks.RegionalBanks()
+        rb = regionalbanks.RegionalBanks(mock_config=mock_config)
         
         # Get specific regional bank for the user's department
         print(f"Getting regional bank information for department {args.department}...")
         bank = rb.by_departement(int(args.department))
-        
         # Apply type structure if needed
         if args.mode == 'types':
-            # Utilisez toujours le département original pour le nom de fichier même en mode types
-            dept_placeholder = create_placeholder(str(args.department))
             bank = convert_to_type_structure(bank)
-            # Save with types suffix
-            save_json(bank, f"regionalBank_{dept_placeholder}_types.json", target_dir)
+            # Save with types suffix, no placeholder
+            save_json(bank, "regionalBank_types.json", target_dir)
         else:
             # Save without sample suffix in data mode
             save_json(bank, f"regionalBank_{args.department}.json", target_dir)
@@ -130,26 +152,17 @@ def main():
         
         # Apply type structure if needed
         if args.mode == 'types':
-            # Keep only one account as an example
             if accs_data:
-                # Récupérer le numéro de compte pour créer un placeholder pour le nom de fichier
+                # Take only one example and convert to type structure
+                first_account = convert_to_type_structure(accs_data[0])
+                
+                # Save the first account as a global example
+                save_json(first_account, 'account_types.json', target_dir)
+                
+                # Get operations for the first account
                 real_account_number = accs_data[0]['numeroCompte']
-                account_placeholder = create_placeholder(real_account_number)
                 
-                # Convertir en structure de types
-                accs_data = [convert_to_type_structure(accs_data[0])]
-                
-                save_json(accs_data, 'accounts_types.json', target_dir)
-                
-                # Process only the first account
-                account = accs_data[0]
-                print(f"Processing sample account structure...")
-                
-                # Save individual account data with types suffix, using placeholder in filename
-                save_json(account, f"account_{account_placeholder}_types.json", target_dir)
-                
-                # Get operations for this account (use a real account number for API call)
-                print(f"Getting operations sample structure...")
+                print(f"Retrieving operations for example account...")
                 acc = accs.search(real_account_number)
                 current_date = datetime.today()
                 previous_date = current_date - timedelta(days=30)
@@ -160,25 +173,27 @@ def main():
                     ops = acc.get_operations(date_start=date_start, date_stop=date_stop, count=10)
                     ops_data = json.loads(ops.as_json())
                     if ops_data:
-                        # Keep only one operation
-                        ops_data = [convert_to_type_structure(ops_data[0])]
-                    save_json(ops_data, f"account_{account_placeholder}_operations_types.json", target_dir)
+                        # Save a global operation example
+                        operation_example = convert_to_type_structure(ops_data[0])
+                        save_json(operation_example, "operation_types.json", target_dir)
                 except Exception as e:
-                    print(f"Error getting operations sample: {e}")
+                    print(f"Error retrieving operations: {e}")
         else:
-            # Original behavior - save all real accounts data without sample suffix
-            save_json(accs_data, 'accounts.json', target_dir)
+            # Group accounts by grandeFamilleProduitCode
+            accounts_by_code = defaultdict(list)
+            for account in accs_data:
+                code = account.get('grandeFamilleProduitCode', 'unknown')
+                accounts_by_code[code].append(account)
             
-            # Process each account individually
+            # Save all accounts into a single file
+            save_json(accs_data, "accounts.json", target_dir)
+            
+            # Process each account for operations and IBAN
             for account in accs_data:
                 account_number = account['numeroCompte']
-                print(f"Processing account {account_number}...")
-                
-                # Save individual account data
-                save_json(account, f"account_{account_number}.json", target_dir)
+                print(f"Getting operations for account {account_number}...")
                 
                 # Get operations for this account
-                print(f"Getting operations for account {account_number}...")
                 acc = accs.search(account_number)
                 current_date = datetime.today()
                 previous_date = current_date - timedelta(days=30)
@@ -191,6 +206,15 @@ def main():
                     save_json(ops_data, f"account_{account_number}_operations.json", target_dir)
                 except Exception as e:
                     print(f"Error getting operations for account {account_number}: {e}")
+                
+                # Get IBAN for this account (empty object if not available)
+                print(f"Getting IBAN for account {account_number}...")
+                try:
+                    # We're just creating an empty object for IBAN as seen in the sample
+                    # You might need to implement the actual IBAN retrieval if needed
+                    save_json({}, f"account_{account_number}_iban.json", target_dir)
+                except Exception as e:
+                    print(f"Error getting IBAN for account {account_number}: {e}")
             
         # Get cards
         print("Getting cards...")
@@ -201,22 +225,15 @@ def main():
             # Apply type structure if needed
             if args.mode == 'types':
                 if cards_data:
-                    # Récupérer l'ID de la carte pour créer un placeholder pour le nom de fichier
+                    # Get the card ID for the API call
                     real_card_id = cards_data[0]['idCarte']
                     real_card_last_4 = real_card_id[-4:]
-                    card_last_4_placeholder = create_placeholder(real_card_last_4)
                     
-                    # Convertir en structure de types
-                    cards_data = [convert_to_type_structure(cards_data[0])]
+                    # Convert to type structure
+                    card_example = convert_to_type_structure(cards_data[0])
                     
-                    save_json(cards_data, 'cards_types.json', target_dir)
-                    
-                    # Process only the first card
-                    card = cards_data[0]
-                    print(f"Processing sample card structure...")
-                    
-                    # Save individual card data with types suffix, using placeholder in filename
-                    save_json(card, f"card_{card_last_4_placeholder}_types.json", target_dir)
+                    # Save a single card example
+                    save_json(card_example, 'card_types.json', target_dir)
                     
                     # Get operations for a card (use real card for API call)
                     try:
@@ -226,22 +243,20 @@ def main():
                         ops_data = json.loads(deferred_ops.as_json())
                         if ops_data:
                             # Keep only one operation
-                            ops_data = [convert_to_type_structure(ops_data[0])]
-                        save_json(ops_data, f"card_{card_last_4_placeholder}_operations_types.json", target_dir)
+                            operation_example = convert_to_type_structure(ops_data[0])
+                            save_json(operation_example, "operation_card_types.json", target_dir)
                     except Exception as e:
                         print(f"Error getting card operations sample: {e}")
-            else:
-                # Original behavior - save all real cards data without sample suffix
-                save_json(cards_data, 'cards.json', target_dir)
+            else:                
+                # Save all cards data with new filename format
+                new_cards_filename = f"cards.json"
+                save_json(cards_data, new_cards_filename, target_dir)
                 
-                # Process each card individually
-                for card in cards_data:
+                # Process each card individually for operations
+                for i, card in enumerate(cards_data):
                     card_id = card['idCarte']
-                    card_last_4 = card_id[-4:]
+                    card_last_4 = card_id.split()[-1][-4:] if ' ' in card_id else card_id[-4:]
                     print(f"Processing card ending with {card_last_4}...")
-                    
-                    # Save individual card data
-                    save_json(card, f"card_{card_last_4}.json", target_dir)
                     
                     # Get operations for this card
                     try:
@@ -249,12 +264,22 @@ def main():
                         card_obj = user_cards.search(card_last_4)
                         deferred_ops = card_obj.get_operations()
                         ops_data = json.loads(deferred_ops.as_json())
-                        save_json(ops_data, f"card_{card_last_4}_operations.json", target_dir)
+                        new_operations_filename = f"card_{card_last_4}_operations.json"
+                        save_json(ops_data, new_operations_filename, target_dir)
                     except Exception as e:
                         print(f"Error getting operations for card {card_last_4}: {e}")
-                    
+            
         except Exception as e:
             print(f"Error getting cards: {e}")
+        
+        # Logout properly
+        print("Logging out...")
+        try:
+            logout_handler = logout.Logout(auth)
+            logout_handler.logout()
+            print("Successfully logged out")
+        except Exception as e:
+            print(f"Error during logout: {e}")
             
         print("Done!")
         

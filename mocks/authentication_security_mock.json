@@ -1,0 +1,11 @@
+{
+  "login-token-XXX": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZXhwIjoxNzQ3NDIzNDgzLCJpYXQiOjE3NDczMzcwODMsInR5cGUiOiJDTElFTlQiLCJjb2RlLWNhaXNzZSI6WFhYfQ.dummy_signature",
+  "agence": "XXX000000000",
+  "marche": "particulier",
+  "caisse-regionale": "crXXX",
+  "cr-path": "/ca-region/",
+  "bandeau-alerte-flag-connexion": "true",
+  "reload-ch": "true",
+  "id-part": "true",
+  "PSSID": "00000000"
+}
