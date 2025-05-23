@@ -1,0 +1,22 @@
+{
+  "dateOperation": "",
+  "dateValeur": "",
+  "typeOperation": "",
+  "codeTypeOperation": "",
+  "familleTypeOperation": "",
+  "libelleOperation": "",
+  "libelleTypeOperation": "",
+  "montant": 0.0,
+  "idDevise": "",
+  "libelleDevise": "",
+  "libelleComplementaire": "",
+  "referenceMandat": "",
+  "idCreancier": "",
+  "libelleCash1": "",
+  "libelleCash2": "",
+  "idCarte": "",
+  "indexCarte": 0,
+  "referenceClient": "",
+  "pictogrammeCSS": "",
+  "fitid": ""
+}
